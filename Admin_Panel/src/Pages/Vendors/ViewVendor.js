@@ -1,6 +1,6 @@
 /** @format */
 import HOC from "../../Layout/HOC";
-import { Form, FloatingLabel, InputGroup } from "react-bootstrap";
+import { Form } from "react-bootstrap"; // Removed unused imports FloatingLabel, InputGroup
 import { Row, Col } from "react-bootstrap";
 import { getApi } from "../../Repository/Repository";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -25,7 +25,7 @@ const ViewVendor = () => {
 
   useEffect(() => {
     fetchHandler();
-  }, []);
+  }, [fetchHandler]);
 
 
   const thead = [

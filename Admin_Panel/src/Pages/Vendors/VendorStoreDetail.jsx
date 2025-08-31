@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 const VendorStoreDetail = () => {
     const { ids } = useParams();
     const [response, setResponse] = useState({});
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false); // Commented out unused variable
     const navigate = useNavigate();
 
     const fetchHandler = () => {
@@ -24,7 +24,7 @@ const VendorStoreDetail = () => {
 
     useEffect(() => {
         fetchHandler();
-    }, []);
+    }, [fetchHandler]);
 
 
     const [openingHours, setOpeningHours] = useState(response?.data?.openingHours || {});

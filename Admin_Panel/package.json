@@ -68,7 +68,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npx update-browserslist-db@latest && CI=false react-scripts build",
+    "build:netlify": "npx update-browserslist-db@latest && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

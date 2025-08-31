@@ -4,7 +4,7 @@ import { Form } from "react-bootstrap"; // Removed unused imports FloatingLabel,
 import { Row, Col } from "react-bootstrap";
 import { getApi } from "../../Repository/Repository";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import TableLayout from "../../Component/TableLayout";
 
 
@@ -15,13 +15,13 @@ const ViewVendor = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const fetchHandler = () => {
+  const fetchHandler = useCallback(() => {
     getApi({
       url: `api/v1/admin/getVenderProfile/${ids}`,
       setResponse,
       setLoading,
     });
-  };
+  }, [ids, setResponse, setLoading]);
 
   useEffect(() => {
     fetchHandler();

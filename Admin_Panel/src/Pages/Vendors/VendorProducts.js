@@ -23,7 +23,7 @@ const VendorProducts = () => {
 
   useEffect(() => {
     fetchHandler();
-  }, []);
+  }, [fetchHandler]);
 
   const thead = [
     "Sno.",
@@ -36,7 +36,7 @@ const VendorProducts = () => {
     "Action",
   ];  
 
-  const deleteHandler = (id) => {
+  const deleteHandler = (id) => { // eslint-disable-line no-unused-vars
     const additionalFunctions = [fetchHandler];
     removeApi({
       url: `api/v1/admin/Product/delete/${id}`,

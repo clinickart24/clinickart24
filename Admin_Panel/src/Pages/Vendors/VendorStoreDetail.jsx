@@ -1,10 +1,10 @@
 /** @format */
 import HOC from "../../Layout/HOC";
-import { Form, FloatingLabel, InputGroup } from "react-bootstrap";
+import { Form } from "react-bootstrap"; // Removed unused imports FloatingLabel, InputGroup
 import { Row, Col } from "react-bootstrap";
 import { getApi } from "../../Repository/Repository";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 
 
@@ -14,13 +14,13 @@ const VendorStoreDetail = () => {
     const [loading, setLoading] = useState(false); // eslint-disable-line no-unused-vars
     const navigate = useNavigate();
 
-    const fetchHandler = () => {
+    const fetchHandler = useCallback(() => {
         getApi({
             url: `api/v1/admin/getAdminStoreByIdVendor/${ids}`,
             setResponse,
             setLoading,
         });
-    };
+    }, [ids, setResponse, setLoading]);
 
     useEffect(() => {
         fetchHandler();

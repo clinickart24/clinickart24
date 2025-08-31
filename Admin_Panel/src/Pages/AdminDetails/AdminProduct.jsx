@@ -1,18 +1,18 @@
 /** @format */
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; // Removed unused useCallback
 import HOC from "../../Layout/HOC";
-import { Link, useNavigate } from "react-router-dom";
-import data from "../../Constant/constant.json";
+import { Link } from "react-router-dom"; // Removed unused useNavigate
+// import data from "../../Constant/constant.json"; // Commented out unused import
 import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
-import Pagination from "../../Component/Pagination";
-import { debouncedSetQuery } from "../../utils/utils";
+// import Pagination from "../../Component/Pagination"; // Commented out unused import
+// import { debouncedSetQuery } from "../../utils/utils"; // Commented out unused import
 import { CreateProduct } from "../../Component/Modals/Modals";
 
 
 const AdminProduct = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Commented out unused variable
   const [show, setShow] = useState(false);
   const [edit, setEdit] = useState(false);
   const [response, setResponse] = useState(null);

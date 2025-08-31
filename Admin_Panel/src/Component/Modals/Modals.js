@@ -2234,7 +2234,7 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   useEffect(() => {
     fetchHandler1();
-  }, [locationId]);
+  }, [locationId, fetchHandler1]);
 
   useEffect(() => {
     fetchHandler();
@@ -2858,7 +2858,7 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   useEffect(() => {
     fetchHandler1();
-  }, [locationId]);
+  }, [locationId, fetchHandler1]);
 
   useEffect(() => {
     fetchHandler();
@@ -3791,7 +3791,7 @@ const CreateProduct = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   useEffect(() => {
     fetchHandler1();
-  }, [categoryid]);
+  }, [categoryid, fetchHandler1]);
 
   const fetchHandler2 = () => {
     getApi({
@@ -4536,7 +4536,7 @@ const CreateArea = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   useEffect(() => {
     fetchHandler1();
-  }, [stateId]);
+  }, [stateId, fetchHandler1]);
 
   useEffect(() => {
     fetchHandler();

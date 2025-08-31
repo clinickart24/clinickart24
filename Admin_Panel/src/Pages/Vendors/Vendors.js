@@ -19,7 +19,7 @@ const Vendors = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
-  // const [status1, setStatus1] = useState(false); // Commented out unused variable
+  const [status1, setStatus1] = useState(false); // eslint-disable-line no-unused-vars
 
 
 
@@ -169,11 +169,11 @@ const Vendors = () => {
     });
   };
 
-  // const handleToggle = (e) => {
-  //   const newStatus = e.target.checked; // Get the new toggle status (true/false)
-  //   setStatus1(newStatus); // Update local state with new toggle status
-  //   updateHandler(newStatus); // Send the new status in the payload
-  // }; // Commented out unused function
+  const handleToggle = (e) => { // eslint-disable-line no-unused-vars
+    const newStatus = e.target.checked; // Get the new toggle status (true/false)
+    setStatus1(newStatus); // Update local state with new toggle status
+    updateHandler(newStatus); // Send the new status in the payload
+  };
 
 
 

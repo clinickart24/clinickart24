@@ -424,7 +424,7 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
   // const [type, setType] = useState(data?.gender || '');
   const [image, setImage] = useState(null); // Changed initial value to null
   const [loading, setLoading] = useState(false);
-  // const [response, setResponse] = useState(null); // Commented out unused variable
+  const [response, setResponse] = useState(null); // eslint-disable-line no-unused-vars
 
   // Add useEffect to update state when `data` prop changes
   useEffect(() => {
@@ -616,7 +616,7 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
   // const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
-  // const [response1, setResponse1] = useState(null); // Commented out unused variable
+  const [response1, setResponse1] = useState(null); // eslint-disable-line no-unused-vars
   const [categoryName, setCategoryName] = useState(data?.categoryId.name || null);
 
 
@@ -893,7 +893,7 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
   });
 
   const [newFeature, setNewFeature] = useState({ features: "", count: 0 });
-  // const [loading, setLoading] = useState(false); // Commented out unused variable
+  const [loading, setLoading] = useState(false); // eslint-disable-line no-unused-vars
 
   const resetForm = () => {
     setSubscriptionData({
@@ -1216,7 +1216,7 @@ const CreateSubscriptionDiscount = ({ show, handleClose, name, fetchApi, data })
     discountyearly: data?.yearlyDiscount || '',
   });
 
-  // const [loading, setLoading] = useState(false); // Commented out unused variable
+  const [loading, setLoading] = useState(false); // eslint-disable-line no-unused-vars
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -1323,7 +1323,7 @@ export default CreateSubscriptionDiscount;
 const CreateFaq = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [question, setQuestion] = useState(data?.question || '');
   const [answer, setAnswer] = useState(data?.answer || '');
-  // const [loading, setLoading] = useState(false); // Commented out unused variable
+  const [loading, setLoading] = useState(false); // eslint-disable-line no-unused-vars
 
   useEffect(() => {
     if (data) {
@@ -1525,7 +1525,7 @@ const CreateBlog = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [name, setName] = useState(data?.name || '');
   const [desc, setDesc] = useState(data?.desc || '');
   const [location, setLocation] = useState(data?.locationOfBlog || '');
-  // const [locationId, setLocationId] = useState(''); // Commented out unused variable
+  const [locationId, setLocationId] = useState(''); // eslint-disable-line no-unused-vars
   const [image, setImage] = useState(data?.blogImage || []);
   const [video, setVideo] = useState(data?.blogVideo || []);
   const [loading, setLoading] = useState(false);
@@ -2105,7 +2105,7 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [location, setLocation] = useState(data?.locationOfEvent || '');
   const [locationId, setLocationId] = useState('');
   const [area, setarea] = useState(data?.areaName || '');
-  // const [areaNameId, setareaNameId] = useState(''); // Commented out unused variable
+  const [areaNameId, setareaNameId] = useState(''); // eslint-disable-line no-unused-vars
   const [image, setImage] = useState(data?.eventImage || []);
   const [video, setVideo] = useState(data?.eventVideo || []);
   const [loading, setLoading] = useState(false);
@@ -2748,7 +2748,7 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [response, setResponse] = useState(null);
   const [response1, setResponse1] = useState(null);
   const [area, setarea] = useState(data?.areaName || '');
-  // const [areaNameId, setareaNameId] = useState(''); // Commented out unused variable
+  const [areaNameId, setareaNameId] = useState(''); // eslint-disable-line no-unused-vars
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -3619,7 +3619,7 @@ const CreateProduct = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [productVideo, setProductVideo] = useState(data?.productVideo || []);
   const [productName, setProductName] = useState(data?.productName || '');
   const [brandName, setBrandName] = useState(data?.brandName || '');
-  // const [ids, setIds] = useState(data?.ID || ''); // Commented out unused variable
+  const [ids, setIds] = useState(data?.ID || ''); // eslint-disable-line no-unused-vars
   const [price, setPrice] = useState(data?.originalPrice || '');
   const [discount, setDiscount] = useState(data?.discount || '');
   const [Minimumorder, setMinimumOrder] = useState(data?.minimunOrderUnit || '');

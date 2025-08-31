@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 const VendorStoreDetail = () => {
     const { ids } = useParams();
     const [response, setResponse] = useState({});
-    // const [loading, setLoading] = useState(false); // Commented out unused variable
+    const [loading, setLoading] = useState(false); // eslint-disable-line no-unused-vars
     const navigate = useNavigate();
 
     const fetchHandler = () => {

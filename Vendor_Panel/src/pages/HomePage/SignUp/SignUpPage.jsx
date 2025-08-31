@@ -3,11 +3,64 @@ import HeaderNav from "../../../components/layout/NavBar/HeaderNav";
 import images from "../../../lib/exportImages";
 import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../../../services/supabase";
 const SignUpPage = () => {
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedDuration, setSelectedDuration] = useState("");
-  const navigate =useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    businessName: "",
+    businessType: "",
+    phone: ""
+  });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      // Validate form
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error("Passwords don't match");
+      }
+
+      if (formData.password.length < 6) {
+        throw new Error("Password must be at least 6 characters");
+      }
+
+      // Sign up with Supabase
+      await authService.signUp(formData.email, formData.password, {
+        first_name: formData.name.split(' ')[0] || formData.name,
+        last_name: formData.name.split(' ').slice(1).join(' ') || '',
+        phone: formData.phone,
+        role: 'vendor'
+      });
+
+      setSuccess("Account created successfully! Please check your email to verify your account.");
+      setStep(2); // Move to verification step
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleNextProfileStep = () => {
     setStep((prev) => prev + 1);
@@ -138,15 +191,29 @@ const SignUpPage = () => {
               <h2 className="text-2xl font-bold mb-6 text-left">
                 Enter your full name and choose your business password
               </h2>
-              <form className="w-full ">
+              <form className="w-full" onSubmit={handleSignUp}>
+                {error && (
+                  <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                    {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                    {success}
+                  </div>
+                )}
                 <div className="mb-3">
                   <label className="block text-gray-700 text-sm font-medium mb-2">
                     Your Name
                   </label>
                   <input
                     type="text"
-                    placeholder="clinicart@gmail.com"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Enter your full name"
                     className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -155,8 +222,12 @@ const SignUpPage = () => {
                   </label>
                   <input
                     type="email"
-                    placeholder="clinicart@gmail.com"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Enter your email address"
                     className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -165,8 +236,12 @@ const SignUpPage = () => {
                   </label>
                   <input
                     type="password"
-                    placeholder="clinicart@gmail.com"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Enter password (min 6 characters)"
                     className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    required
                   />
                 </div>
                 <div className="mb-6">
@@ -175,16 +250,20 @@ const SignUpPage = () => {
                   </label>
                   <input
                     type="password"
-                    placeholder="clinicart@gmail.com"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    placeholder="Confirm your password"
                     className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    required
                   />
                 </div>
                 <button
-                  type="button"
-                  onClick={nextStep}
-                  className="w-full px-6 py-3 bg-[#C53958] text-white rounded-md hover:bg-[#c42b4d] mb-4"
+                  type="submit"
+                  disabled={loading}
+                  className="w-full px-6 py-3 bg-[#C53958] text-white rounded-md hover:bg-[#c42b4d] mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Next Steps
+                  {loading ? "Creating Account..." : "Create Account"}
                 </button>
                 <p className="text-sm text-gray-600 mb-4 text-center">
                   By creating an account, you agree to Clinic Kart{" "}
@@ -217,33 +296,28 @@ const SignUpPage = () => {
 
         {step === 2 && (
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 max-w-lg">
-            <h2 className="text-2xl font-bold mb-2">Verify email address</h2>
+            <h2 className="text-2xl font-bold mb-2">Check Your Email</h2>
             <p className="text-gray-600 mb-4 text-sm">
-              To verify your email, we've sent a One Time Password (OTP) to:{" "}
-              <strong>clinicart@gmail.com</strong>
+              We've sent a verification link to:{" "}
+              <strong>{formData.email}</strong>
               <br />
-              <button
-                onClick={() => {}}
-                className="text-blue-500 underline ml-1"
-              >
-                (Change)
-              </button>
+              Please check your email and click the verification link to activate your account.
             </p>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-medium mb-2">
-                Enter OTP
-              </label>
-              <input
-                type="text"
-                placeholder="clinicart@gmail.com"
-                className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
-              />
+
+            <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded">
+              <h3 className="font-medium text-blue-800 mb-2">Next Steps:</h3>
+              <ol className="text-sm text-blue-700 list-decimal list-inside space-y-1">
+                <li>Check your email inbox (and spam folder)</li>
+                <li>Click the verification link in the email</li>
+                <li>Return here to complete your vendor registration</li>
+              </ol>
             </div>
+
             <button
-              onClick={nextStep}
+              onClick={() => navigate('/login')}
               className="w-full px-6 py-3 bg-[#C53958] text-white rounded-md hover:bg-[#c42b4d] mb-4"
             >
-              Create your Amazon account
+              Go to Login
             </button>
             <p className="text-sm text-gray-600 mb-4 text-left">
               By creating an account, you agree to Clinic Kart{" "}
@@ -262,10 +336,14 @@ const SignUpPage = () => {
               of your organization and have authority to bind your organization.
             </p>
             <button
-              onClick={() => alert("OTP Resent")}
+              onClick={() => {
+                setStep(1);
+                setError("");
+                setSuccess("");
+              }}
               className="text-[#C53958] text-sm font-medium underline w-full text-left mb-2"
             >
-              RESEND OTP
+              ← Back to Registration
             </button>
           </div>
         )}

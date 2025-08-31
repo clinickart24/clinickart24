@@ -1,0 +1,364 @@
+
+
+{
+    "users" : [
+  {
+    "firstname": "John",
+    "lastname": "Doe",
+    "username": "johndoe23",
+    "mobilenumber": "+1 (555) 123-4567",
+    "profilepicture": "https://img.freepik.com/free-photo/portrait-happy-male-with-broad-smile_176532-8175.jpg?t=st=1714041244~exp=1714044844~hmac=ebd5a8df1e46b6ac862eeb6e7e75318c4d2c462f453bc3a8fcf927c81f908e5f&w=1380",
+    "email": "johndoe@example.com"
+  },
+  {
+    "firstname": "Alice",
+    "lastname": "Smith",
+    "username": "asmith89",
+    "mobilenumber": "+1 (555) 987-6543",
+    "profilepicture": "https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?t=st=1714041402~exp=1714045002~hmac=63f4cd2e9a0ac1a990c5c719a71cd7e22ce150b84529add39376ba099ba936e9&w=1380",
+    "email": "alice.smith@example.com"
+  },
+  {
+    "firstname": "Emma",
+    "lastname": "Brown",
+    "username": "ebrown123",
+    "mobilenumber": "+1 (555) 456-7890",
+    "profilepicture": "https://img.freepik.com/free-photo/pleasant-looking-caucasian-female-with-long-hair-wearing-yellow-casual-shirt-having-good-mood-looking-happily-camera_176532-11558.jpg?t=st=1714041425~exp=1714045025~hmac=bb09b5c6f23f7af0b8eb0a9963ee8992d9d40faf92877ecfeb487c9a5646b06f&w=1380",
+    "email": "emma.brown@example.com"
+  },
+  {
+    "firstname": "David",
+    "lastname": "Wilson",
+    "username": "dwilson77",
+    "mobilenumber": "+1 (555) 789-0123",
+    "profilepicture": "https://img.freepik.com/premium-photo/portrait-happy-young-casual-man-standing_171337-29744.jpg?w=1380",
+    "email": "david.wilson@example.com"
+  },
+  {
+    "firstname": "Sophia",
+    "lastname": "Taylor",
+    "username": "staylor12",
+    "mobilenumber": "+1 (555) 234-5678",
+    "profilepicture": "https://img.freepik.com/free-photo/young-woman-with-round-glasses-yellow-sweater_273609-7091.jpg?t=st=1714041449~exp=1714045049~hmac=30bb9ed284d004e8dff0a9623f31c8da420ae15a4c3b7ea5b2ae0b4338918f86&w=1380",
+    "email": "sophia.taylor@example.com"
+  },
+  {
+    "firstname": "Michael",
+    "lastname": "Johnson",
+    "username": "mjohnson45",
+    "mobilenumber": "+1 (555) 876-5432",
+    "profilepicture": "https://img.freepik.com/free-photo/close-up-portrait-young-bearded-man-white-shirt-jacket-posing-camera-with-broad-smile-isolated-gray_171337-629.jpg?t=st=1714041459~exp=1714045059~hmac=9e6e9410ee0e5c5a23228c43cba1aae56314a7dcd7538eb23a9dd91fc44cb3dd&w=1380",
+    "email": "michael.johnson@example.com"
+  },
+  {
+    "firstname": "Olivia",
+    "lastname": "Martinez",
+    "username": "omartinez34",
+    "mobilenumber": "+1 (555) 543-2109",
+    "profilepicture": "https://img.freepik.com/free-photo/pretty-smiling-joyfully-female-with-fair-hair-dressed-casually-looking-with-satisfaction_176420-15187.jpg?t=st=1714041470~exp=1714045070~hmac=d01a956c1dacf1ace570996115102a28e533ae947c25a37a5500c0097773f76b&w=1380",
+    "email": "olivia.martinez@example.com"
+  },
+  {
+    "firstname": "Daniel",
+    "lastname": "Garcia",
+    "username": "dgarcia56",
+    "mobilenumber": "+1 (555) 321-0987",
+    "profilepicture": "https://img.freepik.com/free-photo/portrait-young-smiling-handsome-man-holding-tablet-computer-looking-straight-front_342744-405.jpg?t=st=1714041486~exp=1714045086~hmac=600edc4dd6a5c813ba33454f955a0a85afe16b54fc905c6fdd505d977efa2bfe&w=1380",
+    "email": "daniel.garcia@example.com"
+  },
+  {
+    "firstname": "Ava",
+    "lastname": "Brown",
+    "username": "abrown78",
+    "mobilenumber": "+1 (555) 678-9012",
+    "profilepicture": "https://img.freepik.com/free-photo/cheerful-curly-business-girl-wearing-glasses_176420-206.jpg?t=st=1714041498~exp=1714045098~hmac=2fd1be94488e5af129f9b1e675067f00cf23ef4e5a1555208f8acad7938aefd4&w=1380",
+    "email": "ava.brown@example.com"
+  },
+  {
+    "firstname": "William",
+    "lastname": "Jones",
+    "username": "wjones90",
+        "mobilenumber": "+1 (555) 210-9876",
+        "profilepicture": "https://img.freepik.com/free-photo/indian-man-smiling-cheerful-expression-closeup-portrait_53876-129387.jpg?t=st=1714041516~exp=1714045116~hmac=af63bd550c6d2737078838e9932827b7ce9c093d73bf6db2a9c8dee04722448a&w=1380",
+    "email": "william.jones@example.com"
+  }
+  ] ,
+  "notifications" :[
+    {
+      "message": "New update available for your app!",
+      "created_date": "2024-04-25T08:00:00Z",
+      "title": "App Update"
+    },
+    {
+      "message": "You have a new message from a friend.",
+      "created_date": "2024-04-24T14:30:00Z",
+      "title": "New Message"
+    },
+    {
+      "message": "Reminder: Your appointment is tomorrow.",
+      "created_date": "2024-04-23T10:15:00Z",
+      "title": "Appointment Reminder"
+    },
+    {
+      "message": "Congratulations! You've earned a reward.",
+      "created_date": "2024-04-22T18:20:00Z",
+      "title": "Reward Earned"
+    },
+    {
+      "message": "Your payment was successful. Thank you!",
+      "created_date": "2024-04-21T12:45:00Z",
+      "title": "Payment Confirmation"
+    },
+    {
+      "message": "Important: Update your security settings.",
+      "created_date": "2024-04-20T09:30:00Z",
+      "title": "Security Alert"
+    },
+    {
+      "message": "Check out our latest blog post for tips.",
+      "created_date": "2024-04-19T15:00:00Z",
+      "title": "New Blog Post"
+    },
+    {
+      "message": "Your subscription is expiring soon.",
+      "created_date": "2024-04-18T11:20:00Z",
+      "title": "Subscription Expiry"
+    },
+    {
+      "message": "We miss you! Come back and explore more.",
+      "created_date": "2024-04-17T16:10:00Z",
+      "title": "We Miss You"
+    },
+    {
+      "message": "Your order has been shipped. Track it here.",
+      "created_date": "2024-04-16T13:05:00Z",
+      "title": "Order Shipped"
+    },
+    {
+      "message": "Join us for our upcoming event this weekend.",
+      "created_date": "2024-04-15T07:30:00Z",
+      "title": "Upcoming Event"
+    },
+    {
+      "message": "Happy Birthday! Enjoy a special discount.",
+      "created_date": "2024-04-14T09:00:00Z",
+      "title": "Birthday Discount"
+    },
+    {
+      "message": "Learn about our new features in our latest update.",
+      "created_date": "2024-04-13T14:40:00Z",
+      "title": "New Features"
+    },
+    {
+      "message": "We're hiring! Check out our career opportunities.",
+      "created_date": "2024-04-12T10:25:00Z",
+      "title": "Job Opportunities"
+    },
+    {
+      "message": "You have a new follower. Connect with them!",
+      "created_date": "2024-04-11T16:50:00Z",
+      "title": "New Follower"
+    },
+    {
+      "message": "Review your recent activity in your account.",
+      "created_date": "2024-04-10T12:15:00Z",
+      "title": "Account Activity"
+    },
+    {
+      "message": "Don't miss out! Sale ends tomorrow.",
+      "created_date": "2024-04-09T08:45:00Z",
+      "title": "Sale Reminder"
+    },
+    {
+      "message": "Share your feedback and help us improve.",
+      "created_date": "2024-04-08T11:55:00Z",
+      "title": "Feedback Request"
+    },
+    {
+      "message": "Check out our new collection. Limited stock!",
+      "created_date": "2024-04-07T14:20:00Z",
+      "title": "New Collection"
+    },
+    {
+      "message": "You've been invited to an exclusive event.",
+      "created_date": "2024-04-06T09:10:00Z",
+      "title": "Exclusive Invitation"
+    }
+  ],
+  "addBanners" : [
+{    "img" : "https://img.freepik.com/free-vector/sale-offers-banner-yellow-blue-color-theme_1017-31301.jpg?w=1380&t=st=1714046446~exp=1714047046~hmac=46f31d172df8cc6763a80304bd3e32af132b2fedfdd04f17cebd0856f01b5d38"},
+{    "img" : "https://img.freepik.com/free-vector/big-sale-offer-template-yellow-purple-color_1017-32175.jpg?t=st=1714046446~exp=1714047046~hmac=0956fdccfe7bf8c32580365b728d94032bbe1c2875fb8fd6b04a94dffbf7fc0e"},
+{    "img" : "https://img.freepik.com/free-vector/mega-sale-banner-origami-style_23-2148403392.jpg"}
+  ],
+  "category" : [
+    {
+        "img" : "./Images/jeans.png" ,
+        "title" : "Jeans"
+    },
+    {
+        "img" : "./Images/kid.png" ,
+        "title" : "Kid"
+    },
+    {
+        "img" : "./Images/men.png" ,
+        "title" : "Men"
+    },
+    {
+        "img" : "./Images/shirts.png" ,
+        "title" : "Shirt"
+    },
+    {
+        "img" : "./Images/shoes.png" ,
+        "title" : "Shoes"
+    },
+    {
+        "img" : "./Images/tshirt.png" ,
+        "title" : "T-Shirt"
+    },
+    {
+        "img" : "./Images/watch.png" ,
+        "title" : "Watch"
+    },
+    {
+        "img" : "./Images/women.png" ,
+        "title" : "Women"
+    }
+  ],
+  "groceryStores" : [
+    {
+      "img" : "https://img.freepik.com/free-photo/person-shopping-with-face-mask_23-2149565248.jpg?t=st=1714052845~exp=1714056445~hmac=1862c5e8b51c896c5d87a6151f1597264e4e8df5d9765291d5086bd20a94b949&w=1380" , 
+      "title" : "Sector 6"
+    },
+    {
+      "img" : "https://img.freepik.com/free-photo/man-woman-with-medical-masks-out-grocery-shopping-with-shopping-cart_23-2149483162.jpg?t=st=1714052868~exp=1714056468~hmac=86f3b1dcb955448543d94024e7e8a8add8520b25b4a4fe9398938a9a954f0a56&w=1380" , 
+      "title" : "Sector 7"
+    },
+    {
+      "img" : "https://img.freepik.com/premium-photo/various-fruits-display-store_1048944-20385291.jpg?w=1060" , 
+      "title" : "Sector 8"
+    },
+    {
+      "img" : "https://img.freepik.com/premium-photo/grocery-store-aisle-filled-with-lots-food_662214-428719.jpg?w=1380" , 
+      "title" : "Sector 9"
+    }
+  ], 
+  "product" : [
+    {
+      "img" : "./Images/4.png",
+      "title" : "Men Black raglan jacket" ,
+      "created_date" : "2024-04-06T09:10:00Z"
+    },
+    {
+      "img" : "./Images/1.png",
+      "title" : "Women Kurtis yellow Punjabi" ,
+      "created_date" : "2024-05-06T09:10:00Z"
+    },
+    {
+      "img" : "./Images/2.png",
+      "title" : "Women Kurtis yellow Punjabi" ,
+      "created_date" : "2024-05-06T09:10:00Z"
+    },
+    {
+      "img" : "./Images/3.png",
+      "title" : "Men Black raglan jacket" ,
+      "created_date" : "2024-05-06T09:10:00Z"
+    }
+  ],
+  "reviews" : [
+    {
+      
+      "user" : "Andrew",
+      "star" : "5",
+      "description" :"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's "
+    },
+    {
+     
+      "user" : "Robert Fox",
+      "star" : "4",
+      "description" :"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's"
+    }
+  ],
+  "brands" : [
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI4UtRgkD3OaAaz6wkny-hrz2dPmwakCud4VDOld_F&s",
+    "https://media.designrush.com/inspiration_images/292255/conversions/levi_logo_4_82250bd000e1-mobile.jpg",
+    "https://i.pinimg.com/originals/7b/2b/78/7b2b78364c365b1e4786840c0f2a356a.jpg"
+  ],
+  "blogs" :[
+    {
+      "img" : "https://img.freepik.com/free-photo/business-women-signature-document_1388-90.jpg?t=st=1714982212~exp=1714985812~hmac=976055110c8d30e9c27e3f216fd2b56fa0ed276fcc3cf92ae1c1c51235111bac&w=1380" ,
+      "desc" : "Lorem Ipsum is simply dummy text of the printing"
+    },
+    {
+      "img" : "https://img.freepik.com/free-photo/worker-reading-news-with-tablet_1162-83.jpg?t=st=1714982272~exp=1714985872~hmac=17fa99a317981f6a10af743572438aa1f195f9ab507188ef1f71644f32d43a55&w=1380" ,
+      "desc" : "Lorem Ipsum is simply dummy text of the printing "
+    },
+    {
+      "img" : "https://img.freepik.com/free-photo/notepad-laptop-concept_23-2147982614.jpg?t=st=1714982279~exp=1714985879~hmac=d674088aa60fb1c1984e512b20a14313ec8fc86416d214b574d07244ea9d5d61&w=1380" ,
+      "desc" : "Lorem Ipsum is simply dummy text of the printing "
+    }
+  ],
+  "orders":[
+    {
+      "orderId" : "EOV7IM7Z3" ,
+      "date" : "04/22/2024",
+      "total" :"124.99",
+      "OrderStatus" : "confirmed",
+      "paymentStatus" : "Paid"
+    },
+    {
+      "orderId" : "EOV7SD7Z3" ,
+      "date" : "01/22/2024",
+      "total" :"100.99",
+      "OrderStatus" : "confirmed",
+      "paymentStatus" : "Paid"
+    },
+    {
+      "orderId" : "DFV7IM7Z3" ,
+      "date" : "04/12/2024",
+      "total" :"1000",
+      "OrderStatus" : "confirmed",
+      "paymentStatus" : "Paid"
+    }
+  ],
+  "Banners" : [
+    {
+        "src" : "https://img.freepik.com/free-vector/sale-offers-banner-yellow-blue-color-theme_1017-31301.jpg?w=1380&t=st=1714046446~exp=1714047046~hmac=46f31d172df8cc6763a80304bd3e32af132b2fedfdd04f17cebd0856f01b5d38",
+        "type" : "Front"
+    },
+    {
+        "src" : "https://img.freepik.com/free-photo/portrait-young-beautiful-ginger-woman-with-tender-serious-face-crossing-arms-looking-camera-is_1258-120324.jpg",
+        "type" : "Hot Deals"
+    }
+  ],
+  "Subscriptions" : [
+    {
+      "title" : "Basic" , 
+      "price" : 1000,
+      "imageCount" : 100 ,
+      "videoCount" : 0 ,
+       "features" : [ "Image" , "Video" ]
+    },
+    {
+      "title" : "Advance" , 
+      "price" : 2000,
+      "imageCount" : 500 ,
+      "videoCount" : 0 ,
+       "features" : [ "Image" , "Video"  , "Flash Buisness" ]
+    },
+    {
+      "title" : "Premium" , 
+      "price" : 5000,
+      "imageCount" : 500 ,
+      "videoCount" : 0 ,
+       "features" : [ "Image" , "Video" , "Flash Buisness" , "Top in search" ]
+    }
+  ]
+  ,
+  "features" : [
+    "Image" ,
+    "Video" ,
+    "Flash Buisness",
+    "Top in search"
+  ]
+
+}

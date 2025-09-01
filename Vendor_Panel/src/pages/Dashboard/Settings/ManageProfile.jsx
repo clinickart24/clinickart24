@@ -122,8 +122,20 @@ const ManageProfile = () => {
     setSaveMessage("");
 
     try {
+      // Update user profile (for phone number and other basic info)
+      const { error: userError } = await supabase
+        .from('users')
+        .update({
+          phone: profile.phoneNumber,
+          first_name: profile.name.split(' ')[0] || '',
+          last_name: profile.name.split(' ').slice(1).join(' ') || ''
+        })
+        .eq('id', userProfile.id);
+
+      if (userError) throw userError;
+
       // Update vendor profile in database
-      const { error } = await supabase
+      const { error: vendorError } = await supabase
         .from('vendors')
         .update({
           category_type: profile.categoryType,
@@ -139,7 +151,7 @@ const ManageProfile = () => {
         })
         .eq('id', userProfile.vendor_id);
 
-      if (error) throw error;
+      if (vendorError) throw vendorError;
 
       setSaveMessage("Profile updated successfully!");
       setTimeout(() => setSaveMessage(""), 3000);

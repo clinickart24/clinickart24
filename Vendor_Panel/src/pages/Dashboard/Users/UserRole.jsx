@@ -24,6 +24,8 @@ const UserRole = () => {
   useEffect(() => {
     if (user) {
       fetchUserRoles();
+    } else {
+      setLoading(false);
     }
   }, [user]);
 

@@ -30,6 +30,9 @@ const Products = () => {
     if (user && userProfile) {
       fetchProducts();
       fetchCategories();
+    } else if (user && !userProfile) {
+      // If user exists but no profile, stop loading
+      setLoading(false);
     }
   }, [user, userProfile]);
 

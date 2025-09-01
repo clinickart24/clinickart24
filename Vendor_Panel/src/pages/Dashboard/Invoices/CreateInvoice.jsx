@@ -1,49 +1,106 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Icon } from "@iconify-icon/react";
 import HOC from "../../../components/layout/LoginLayout/HOC";
 import images from "../../../lib/exportImages";
+import { AuthContext } from "../../../context/AuthContext";
+import { supabase } from "../../../services/supabase";
+import { Icon } from "@iconify-icon/react";
 import { useNavigate } from "react-router-dom";
 
 const CreateInvoice = () => {
-  const [customerName, setCustomerName] = useState("Samanta Legend");
-  const [email, setEmail] = useState("abc@gmail.com");
-  const [date, setDate] = useState("21/08/2022");
+  const { user, userProfile } = useContext(AuthContext);
+  const [customerName, setCustomerName] = useState("");
+  const [email, setEmail] = useState("");
+  const [date, setDate] = useState(new Date().toLocaleDateString());
   const [invoiceNumber, setInvoiceNumber] = useState(
-    "INV/2022114/MPL/3820356839"
+    `INV/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000000)}`
   );
   const navigate = useNavigate();
-  const [countryCode, setCountryCode] = useState("+62");
-  const [phoneNumber, setPhoneNumber] = useState("8723781236");
+  const [countryCode, setCountryCode] = useState("+1");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [status, setStatus] = useState("Waiting");
 
-  const [businessName, setBusinessName] = useState("Samanta Legend");
-  const [sellerEmail, setSellerEmail] = useState("abc@gmail.com");
-  const [address, setAddress] = useState("S");
-  const [sellerCountryCode, setSellerCountryCode] = useState("+62");
-  const [contactNumber, setContactNumber] = useState("8723781236");
+  const [businessName, setBusinessName] = useState("");
+  const [sellerEmail, setSellerEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [sellerCountryCode, setSellerCountryCode] = useState("+1");
+  const [contactNumber, setContactNumber] = useState("");
 
-  const [items, setItems] = useState([
-    {
-      product: "T-Men's UA Storm Armour Down 2.0 Jacket",
-      sku: "123980123490",
-      size: "M",
-      color: "Cream",
-      qty: 2,
-      price: 140,
-      total: 280,
-      image: images.homePage.login.dashboard.products.images[0].image,
-    },
-    {
-      product: "T-Men's UA Storm Armour Down 2.0 Jacket",
-      sku: "310498014923",
-      size: "L",
-      color: "Pink",
-      qty: 1,
-      price: 129,
-      total: 129,
-      image: images.homePage.login.dashboard.products.images[1].image,
-    },
-  ]);
+  const [products, setProducts] = useState([]);
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    if (user && userProfile) {
+      fetchProducts();
+      loadUserData();
+    }
+  }, [user, userProfile]);
+
+  const fetchProducts = async () => {
+    try {
+      if (!userProfile?.vendor_id) {
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('vendor_id', userProfile.vendor_id)
+        .eq('status', 'active');
+
+      if (error) throw error;
+      setProducts(data || []);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadUserData = () => {
+    if (userProfile) {
+      setBusinessName(`${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() || 'Business Name');
+      setSellerEmail(userProfile.email || '');
+      setContactNumber(userProfile.phone || '');
+    }
+  };
+
+  const addItemToInvoice = (product, quantity = 1) => {
+    const newItem = {
+      id: product.id,
+      product: product.name,
+      sku: product.sku || `SKU-${product.id}`,
+      size: product.specifications?.size || 'N/A',
+      color: product.specifications?.color || 'N/A',
+      qty: quantity,
+      price: parseFloat(product.price) || 0,
+      total: (parseFloat(product.price) || 0) * quantity,
+      image: product.image_url || images.homePage.login.dashboard.products.images[0]?.image,
+    };
+
+    setItems(prevItems => [...prevItems, newItem]);
+    setShowAddItemModal(false);
+  };
+
+  const removeItem = (index) => {
+    setItems(prevItems => prevItems.filter((_, i) => i !== index));
+  };
+
+  const updateItemQuantity = (index, newQty) => {
+    if (newQty < 1) return;
+
+    setItems(prevItems =>
+      prevItems.map((item, i) =>
+        i === index
+          ? { ...item, qty: newQty, total: item.price * newQty }
+          : item
+      )
+    );
+  };
 
   const subtotal = items.reduce((acc, item) => acc + item.total, 0);
   const gst = subtotal * 0.18;
@@ -180,7 +237,16 @@ const CreateInvoice = () => {
         </div>
 
         <div className="space-y-4 pt-6">
-          <h2 className="text-lg font-semibold">Item List</h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold">Item List</h2>
+            <button
+              onClick={() => setShowAddItemModal(true)}
+              className="bg-[#C53958] hover:bg-[#A12E47] text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+            >
+              <Icon icon="mdi:plus" />
+              Add Item
+            </button>
+          </div>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200 rounded-lg">
               <thead className="bg-gray-50">
@@ -272,6 +338,59 @@ const CreateInvoice = () => {
           </button>
         </div>
       </div>
+
+      {/* Add Item Modal */}
+      {showAddItemModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Add Item to Invoice</h3>
+              <button
+                onClick={() => setShowAddItemModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <Icon icon="mdi:close" className="text-xl" />
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C53958] mx-auto"></div>
+                <p className="mt-2 text-gray-600">Loading products...</p>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-600">No products available. Please add products first.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {products.map((product) => (
+                  <div key={product.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={product.image_url || images.homePage.login.dashboard.products.images[0]?.image}
+                        alt={product.name}
+                        className="w-16 h-16 rounded-lg object-cover"
+                      />
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">{product.name}</h4>
+                        <p className="text-sm text-gray-600">SKU: {product.sku || `SKU-${product.id}`}</p>
+                        <p className="text-lg font-semibold text-[#C53958]">${product.price}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => addItemToInvoice(product)}
+                      className="w-full mt-3 bg-[#C53958] hover:bg-[#A12E47] text-white py-2 px-4 rounded-md text-sm font-medium"
+                    >
+                      Add to Invoice
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify-icon/react";
 import HOC from "../../../components/layout/LoginLayout/HOC";
 import images from "../../../lib/exportImages";
 import { AuthContext } from "../../../context/AuthContext";
 import { supabase } from "../../../services/supabase";
-import { Icon } from "@iconify-icon/react";
-import { useNavigate } from "react-router-dom";
 
 const CreateInvoice = () => {
   const { user, userProfile } = useContext(AuthContext);

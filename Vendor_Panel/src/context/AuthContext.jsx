@@ -25,8 +25,9 @@ export const AuthProvider = ({ children }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchUserProfile(session.user.id);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     // Listen for auth changes
@@ -38,17 +39,10 @@ export const AuthProvider = ({ children }) => {
           await fetchUserProfile(session.user.id);
         } else {
           setUserProfile(null);
+          setLoading(false);
         }
 
-        setLoading(false);
-
-        if (event === 'SIGNED_IN') {
-          console.log('Vendor signed in:', session?.user);
-          // Check if user is vendor or admin
-          if (userProfile?.role === 'vendor' || userProfile?.role === 'admin') {
-            navigate('/dashboard');
-          }
-        } else if (event === 'SIGNED_OUT') {
+        if (event === 'SIGNED_OUT') {
           console.log('Vendor signed out');
           navigate('/');
         }
@@ -56,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     );
 
     return () => subscription.unsubscribe();
-  }, [navigate, userProfile?.role]);
+  }, [navigate]);
 
   const fetchUserProfile = async (userId) => {
     try {
@@ -73,6 +67,7 @@ export const AuthProvider = ({ children }) => {
           await createMissingUserProfile(userId);
           return;
         }
+        setLoading(false);
         return;
       }
 
@@ -83,8 +78,15 @@ export const AuthProvider = ({ children }) => {
       };
 
       setUserProfile(profileWithVendorId);
+      setLoading(false);
+
+      // Navigate to dashboard if user is vendor or admin
+      if (profileWithVendorId.role === 'vendor' || profileWithVendorId.role === 'admin') {
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.error('Error fetching user profile:', error);
+      setLoading(false);
     }
   };
 
@@ -131,6 +133,7 @@ export const AuthProvider = ({ children }) => {
       await fetchUserProfile(userId);
     } catch (error) {
       console.error('Error creating missing user profile:', error);
+      setLoading(false);
     }
   };
 

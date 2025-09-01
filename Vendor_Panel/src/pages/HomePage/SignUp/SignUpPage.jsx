@@ -284,10 +284,27 @@ const SignUpPage = () => {
                 </p>
                 <button
                   type="button"
-                  onClick={() => alert("OTP Resent")}
-                  className="text-[#C53958] text-sm font-medium underline"
+                  onClick={async () => {
+                    try {
+                      setLoading(true);
+                      const { error } = await authService.signUp(formData.email, formData.password, {
+                        first_name: formData.name.split(' ')[0] || formData.name,
+                        last_name: formData.name.split(' ').slice(1).join(' ') || '',
+                        phone: formData.phone,
+                        role: 'vendor'
+                      });
+                      if (error) throw error;
+                      setSuccess("Verification email resent! Please check your inbox.");
+                    } catch (error) {
+                      setError(error.message);
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  className="text-[#C53958] text-sm font-medium underline disabled:opacity-50"
                 >
-                  RESEND OTP
+                  {loading ? "Sending..." : "RESEND VERIFICATION EMAIL"}
                 </button>
               </form>
             </div>

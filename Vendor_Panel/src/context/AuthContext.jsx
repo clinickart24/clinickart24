@@ -67,7 +67,14 @@ export const AuthProvider = ({ children }) => {
         .single();
 
       if (error) throw error;
-      setUserProfile(data);
+
+      // Add vendor_id to the profile for easy access
+      const profileWithVendorId = {
+        ...data,
+        vendor_id: data.vendors?.[0]?.id || null
+      };
+
+      setUserProfile(profileWithVendorId);
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }

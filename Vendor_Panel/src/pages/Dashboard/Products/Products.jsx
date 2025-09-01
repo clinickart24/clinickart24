@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import HOC from "../../../components/layout/LoginLayout/HOC";
 import {
   ReusablePaginationComponent,
@@ -7,6 +7,8 @@ import {
 import { Icon } from "@iconify-icon/react";
 import images from "../../../lib/exportImages";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../context/AuthContext";
+import { supabase } from "../../../services/supabase";
 
 const products = [
   {
@@ -53,9 +55,54 @@ const products = [
 ];
 
 const Products = () => {
+  const { user, userProfile } = useContext(AuthContext);
   const [currentPage, setCurrentPage] = useState(1);
-  const navigate=useNavigate();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
   const itemsPerPage = 4;
+
+  useEffect(() => {
+    if (user && userProfile?.vendor_id) {
+      fetchProducts();
+    }
+  }, [user, userProfile]);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          categories(name)
+        `)
+        .eq('vendor_id', userProfile.vendor_id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Transform data to match the expected format
+      const transformedProducts = data.map(product => ({
+        id: product.id,
+        name: product.name,
+        category: product.categories?.name || 'Uncategorized',
+        status: product.status || 'draft',
+        stock: product.inventory || 0,
+        price: `$${parseFloat(product.price || 0).toFixed(2)}`,
+        image: product.images?.[0] || images.homePage.login.dashboard.products.images[0].image,
+      }));
+
+      setProducts(transformedProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setError("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const paginatedData = products.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -118,6 +165,28 @@ const Products = () => {
       ),
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C53958]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        {error}
+        <button
+          onClick={fetchProducts}
+          className="ml-4 text-sm bg-red-100 hover:bg-red-200 px-2 py-1 rounded"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>

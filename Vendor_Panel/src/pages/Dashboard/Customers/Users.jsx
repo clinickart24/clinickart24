@@ -4,6 +4,7 @@ import { ReusablePaginationComponent, ReusableTableComponent } from "../../../co
 import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
 import { AuthContext } from "../../../context/AuthContext";
 import { supabase } from "../../../services/supabase";
+import { exportTableData } from "../../../utils/exportUtils";
 
 const Users = () => {
   const { user, userProfile } = useContext(AuthContext);
@@ -233,7 +234,10 @@ const Users = () => {
           <p className="text-gray-600 mt-1">Manage your customer users ({filteredUsers.length} total)</p>
         </div>
         <div className="flex gap-2">
-          <button className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2">
+          <button
+            onClick={() => exportTableData(filteredUsers, columns, 'customer-users', 'excel')}
+            className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+          >
             <Icon icon="mdi:download" />
             Export
           </button>

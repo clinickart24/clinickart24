@@ -1,7 +1,8 @@
 
 import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
-import React from "react";
+import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../context/AuthContext";
 
 const SidebarItem = React.memo(({ icon, label, path }) => {
   const location = useLocation();
@@ -29,21 +30,24 @@ const SidebarItem = React.memo(({ icon, label, path }) => {
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const { logout, userProfile } = useContext(AuthContext);
   return (
     <div>
       <div className="flex flex-col h-screen sidebarBackgroundColor p-4 shadow-2xl text-sm font-medium text-gray-700">
         <div className="flex justify-between items-center pb-4 mb-4 w-full max-w-[260px]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-purple-400 text-white flex items-center justify-center font-bold">
-              K
+              {userProfile?.first_name?.charAt(0)?.toUpperCase() || userProfile?.email?.charAt(0)?.toUpperCase() || 'U'}
             </div>
             <div>
-              <div className="text-sm font-semibold">Hey, Kiara</div>
+              <div className="text-sm font-semibold">
+                Hey, {userProfile?.first_name || userProfile?.email?.split('@')[0] || 'User'}
+              </div>
               <div
                 className="text-xs text-gray-500 flex items-center cursor-pointer"
-                onClick={() => navigate("/personal-details")}
+                onClick={() => navigate("/settings/manage-profile")}
               >
-                <span> Account</span>{" "}
+                <span>{userProfile?.role?.charAt(0)?.toUpperCase() + userProfile?.role?.slice(1) || 'Account'}</span>{" "}
                 <Icon
                   icon="iconamoon:arrow-right-2-light"
                   className="text-black text-lg"
@@ -130,7 +134,10 @@ const Sidebar = () => {
             path="/settings"
           />
           <div className="">
-            <button className="flex items-center justify-center gap-2 bg-pink-500 text-white px-8 py-2 rounded-lg text-sm">
+            <button
+              onClick={logout}
+              className="flex items-center justify-center gap-2 bg-pink-500 hover:bg-pink-600 text-white px-8 py-2 rounded-lg text-sm transition-colors"
+            >
               <Icon icon="fa-solid:sign-out-alt" />
               <span>Logout</span>
             </button>

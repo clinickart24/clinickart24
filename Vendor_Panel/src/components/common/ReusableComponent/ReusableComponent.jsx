@@ -151,7 +151,7 @@ export const ReusableTableComponent = ({ data = [], columns = [] }) => {
                   key={col.accessor}
                   className="p-4 text-gray-600 font-semibold"
                 >
-                  {col.Cell ? col.Cell(row) : row[col.accessor]}
+                  {col.Cell ? col.Cell({ value: row[col.accessor], row: { original: row } }) : row[col.accessor]}
                 </td>
               ))}
             </tr>

@@ -7,6 +7,7 @@ import {
 } from "../../../components/common/ReusableComponent/ReusableComponent";
 import { AuthContext } from "../../../context/AuthContext";
 import { supabase } from "../../../services/supabase";
+import { exportTableData } from "../../../utils/exportUtils";
 
 const UserRole = () => {
   const { user, userProfile } = useContext(AuthContext);
@@ -444,7 +445,10 @@ const UserRole = () => {
           <p className="text-gray-600 mt-1">Manage user roles and permissions ({filteredUserRoles.length} total)</p>
         </div>
         <div className="flex gap-2">
-          <button className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2">
+          <button
+            onClick={() => exportTableData(filteredUserRoles, columns, 'user-roles', 'excel')}
+            className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+          >
             <Icon icon="mdi:download" />
             Export
           </button>

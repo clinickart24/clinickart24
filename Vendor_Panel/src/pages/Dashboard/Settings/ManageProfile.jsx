@@ -1,18 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import HOC from "../../../components/layout/LoginLayout/HOC";
 import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
+import { AuthContext } from "../../../context/AuthContext";
 
 const ManageProfile = () => {
+  const { logout, userProfile } = useContext(AuthContext);
   const [profile, setProfile] = useState({
     avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    name: "Marvin McKinney",
-    role: "Super Admin",
+    name: "",
+    role: "",
     countryCode: "+1",
-    phoneNumber: "762394289312",
-    address: "8502 Preston Rd. Inglewood, Maine 98380",
-    email: "samantalegend@mail.com",
+    phoneNumber: "",
+    address: "",
+    email: "",
     password: "********",
   });
+
+  useEffect(() => {
+    if (userProfile) {
+      setProfile({
+        avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+        name: `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() || userProfile.email?.split('@')[0] || 'User',
+        role: userProfile.role?.charAt(0)?.toUpperCase() + userProfile.role?.slice(1) || 'User',
+        countryCode: "+1",
+        phoneNumber: userProfile.phone || "",
+        address: userProfile.vendor_info?.address ?
+          `${userProfile.vendor_info.address.street || ''}, ${userProfile.vendor_info.address.city || ''}, ${userProfile.vendor_info.address.state || ''} ${userProfile.vendor_info.address.zip || ''}`.trim() :
+          "",
+        email: userProfile.email || "",
+        password: "********",
+      });
+    }
+  }, [userProfile]);
 
   const handleChange = (field, value) => {
     setProfile({ ...profile, [field]: value });
@@ -119,7 +138,10 @@ const ManageProfile = () => {
           </div>
           <div className="pt-2 flex items-center justify-between gap-2">
             <p className="text-[#C53958]">Logout</p>
-            <button className="bg-[#FF5630] text-white px-4 py-2 rounded-lg hover:bg-[#FF5630]/80">
+            <button
+              onClick={logout}
+              className="bg-[#FF5630] text-white px-4 py-2 rounded-lg hover:bg-[#FF5630]/80 transition-colors"
+            >
               Log out
             </button>
           </div>

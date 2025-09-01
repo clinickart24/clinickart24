@@ -92,6 +92,11 @@ export const AuthProvider = ({ children }) => {
           vendor_id: vendorData.id,
           vendor_info: vendorData
         };
+      } else if (vendorError && userData.role === 'vendor') {
+        // If user is supposed to be a vendor but no vendor record exists, create one
+        console.log('Creating missing vendor record for user:', userId);
+        await createMissingVendorProfile(userId, userData);
+        return; // Re-fetch after creating vendor record
       }
 
       console.log('User profile loaded:', profileWithVendorId);
@@ -153,6 +158,49 @@ export const AuthProvider = ({ children }) => {
       await fetchUserProfile(userId);
     } catch (error) {
       console.error('Error creating missing user profile:', error);
+      setLoading(false);
+    }
+  };
+
+  const createMissingVendorProfile = async (userId, userData) => {
+    try {
+      // Create vendor profile
+      const { error: vendorError } = await supabase
+        .from('vendors')
+        .insert({
+          user_id: userId,
+          business_name: `${userData.first_name || 'User'} ${userData.last_name || 'Business'}`.trim(),
+          business_type: 'General',
+          description: 'New vendor account',
+          verification_status: 'pending',
+          commission_rate: 5.0,
+          contact_info: {
+            email: userData.email,
+            phone: userData.phone || ''
+          },
+          address: {
+            street: '',
+            city: '',
+            state: '',
+            zip: '',
+            country: ''
+          },
+          settings: {
+            notifications: true,
+            auto_accept_orders: false
+          }
+        });
+
+      if (vendorError) {
+        console.error('Error creating vendor profile:', vendorError);
+        return;
+      }
+
+      console.log('Vendor profile created successfully');
+      // Fetch profile again after creating vendor
+      await fetchUserProfile(userId);
+    } catch (error) {
+      console.error('Error creating missing vendor profile:', error);
       setLoading(false);
     }
   };

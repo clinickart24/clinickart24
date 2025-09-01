@@ -5,6 +5,7 @@ import {
   ReusableTableComponent,
 } from "../../../components/common/ReusableComponent/ReusableComponent";
 import { Icon } from "@iconify-icon/react";
+import { exportTableData } from "../../../utils/exportUtils";
 
 const transactions = [
   {
@@ -165,7 +166,10 @@ const TransactionList = () => {
               />
             </div>
 
-            <button className="text-sm flex items-center gap-1 border border-[#D64860] text-[#D64860] px-3 py-1.5 rounded">
+            <button
+              onClick={() => exportTableData(paginatedData, columns, 'transactions', 'excel')}
+              className="text-sm flex items-center gap-1 border border-[#D64860] text-[#D64860] px-3 py-1.5 rounded hover:bg-[#D64860] hover:text-white transition-colors"
+            >
               <Icon icon="mdi:export" className="text-lg" />
               Export
             </button>

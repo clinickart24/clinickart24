@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import HOC from "../../../components/layout/LoginLayout/HOC";
+import { AuthContext } from "../../../context/AuthContext";
+import { supabase } from "../../../services/supabase";
+import { useNavigate } from "react-router-dom";
 
 const AddProduct = () => {
+  const { user, userProfile } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -13,7 +18,31 @@ const AddProduct = () => {
     price: "",
     discountType: "",
     discountValue: "",
+    inventory: 0,
   });
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
+
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -24,11 +53,101 @@ const AddProduct = () => {
     } else {
       setForm({ ...form, [name]: value });
     }
+    setError(""); // Clear error when user types
   };
 
-  const handleSubmit = (e) => {
+  const generateSlug = (name) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim('-');
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Product Data:", form);
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    try {
+      // Validate required fields
+      if (!form.name || !form.price || !form.category) {
+        throw new Error("Please fill in all required fields");
+      }
+
+      if (!userProfile?.vendor_id) {
+        throw new Error("Vendor profile not found");
+      }
+
+      // Calculate compare price if discount is applied
+      let comparePrice = null;
+      if (form.discountType && form.discountValue) {
+        const price = parseFloat(form.price);
+        if (form.discountType === 'percentage') {
+          comparePrice = price / (1 - parseFloat(form.discountValue) / 100);
+        } else {
+          comparePrice = price + parseFloat(form.discountValue);
+        }
+      }
+
+      // Create product data
+      const productData = {
+        vendor_id: userProfile.vendor_id,
+        category_id: form.category,
+        name: form.name,
+        slug: generateSlug(form.name),
+        description: form.description,
+        price: parseFloat(form.price),
+        compare_price: comparePrice,
+        inventory: parseInt(form.inventory) || 0,
+        status: form.status ? 'active' : 'draft',
+        specifications: {
+          gender: form.gender,
+          weight: form.weight,
+          discount_type: form.discountType,
+          discount_value: form.discountValue
+        }
+      };
+
+      // Insert product into database
+      const { data, error } = await supabase
+        .from('products')
+        .insert(productData)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setSuccess("Product added successfully!");
+
+      // Reset form
+      setForm({
+        name: "",
+        description: "",
+        category: "",
+        gender: "",
+        weight: "",
+        status: false,
+        images: [],
+        price: "",
+        discountType: "",
+        discountValue: "",
+        inventory: 0,
+      });
+
+      // Redirect to products page after 2 seconds
+      setTimeout(() => {
+        navigate("/products");
+      }, 2000);
+
+    } catch (error) {
+      console.error("Error adding product:", error);
+      setError(error.message || "Failed to add product");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,6 +157,18 @@ const AddProduct = () => {
         <h2 className="text-lg font-semibold mb-6 border-b border-gray-200">
           Product Information
         </h2>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
+            {success}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="mb-6 border-b border-gray-200 flex flex-col lg:flex-row justify-between">
@@ -96,10 +227,14 @@ const AddProduct = () => {
               value={form.category}
               onChange={handleChange}
               className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 lg:w-1/2"
+              required
             >
               <option value="">Select Category</option>
-              <option value="Clothing">Clothing</option>
-              <option value="Electronics">Electronics</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -262,6 +397,28 @@ const AddProduct = () => {
               onChange={handleChange}
               placeholder="₹ 000"
               className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 lg:w-1/2"
+              required
+            />
+          </div>
+
+          {/* Inventory Field */}
+          <div className="mb-6 border-b border-gray-200 flex flex-col lg:flex-row justify-between">
+            <div className="lg:w-1/2">
+              <label className="block text-sm font-medium text-gray-700">
+                Inventory Stock
+              </label>
+              <p className="text-xs text-gray-500 pb-4 pt-2">
+                Set the available stock quantity for this product
+              </p>
+            </div>
+            <input
+              type="number"
+              name="inventory"
+              value={form.inventory}
+              onChange={handleChange}
+              placeholder="0"
+              min="0"
+              className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 lg:w-1/2"
             />
           </div>
 
@@ -316,9 +473,10 @@ const AddProduct = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-pink-600 text-white rounded-lg"
+              disabled={loading}
+              className="px-4 py-2 bg-pink-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Next
+              {loading ? "Adding Product..." : "Add Product"}
             </button>
           </div>
         </form>

@@ -1,67 +1,73 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import HOC from "../../../components/layout/LoginLayout/HOC";
 import {
   ReusablePaginationComponent,
   ReusableTableComponent,
 } from "../../../components/common/ReusableComponent/ReusableComponent";
 import { Icon } from "@iconify-icon/react";
+import { AuthContext } from "../../../context/AuthContext";
+import { supabase } from "../../../services/supabase";
 
-const users = [
-  {
-    name: "Samanta Legend",
-    email: "samanta@mail.com",
-    phoneNumber: "(307) 555-0133",
-    address: "2972 Westheimer Rd. Santa Ana, Illinois 85486",
-    createdAt: "Sep 19, 2010",
-    lastActivity: "May 6, 2012",
-  },
-  {
-    name: "Jenny Wilson",
-    email: "jenny@mail.com",
-    phoneNumber: "(205) 555-0100",
-    address: "2715 Ash Dr. San Jose, South Dakota 83475",
-    createdAt: "Oct 25, 2019",
-    lastActivity: "Oct 25, 2019",
-  },
-  {
-    name: "Ronald Richards",
-    email: "rrichards@mail.com",
-    phoneNumber: "(207) 555-0119",
-    address: "8502 Preston Rd. Inglewood, Maine 98380",
-    createdAt: "May 20, 2015",
-    lastActivity: "May 20, 2015",
-  },
-  {
-    name: "Annette Black",
-    email: "blackann@mail.com",
-    phoneNumber: "(252) 555-0126",
-    address: "6391 Elgin St. Celina, Delaware 10299",
-    createdAt: "Aug 24, 2013",
-    lastActivity: "Aug 24, 2013",
-  },
-  {
-    name: "Kristin Watson",
-    email: "kristinw@mail.com",
-    phoneNumber: "(217) 555-0113",
-    address: "8502 Preston Rd. Inglewood, Maine 98380",
-    createdAt: "Sep 9, 2013",
-    lastActivity: "Sep 9, 2013",
-  },
-  {
-    name: "Jacob Jones",
-    email: "jjones2@mail.com",
-    phoneNumber: "(702) 555-0122",
-    address: "3891 Ranchview Dr. Richardson, California 62639",
-    createdAt: "Aug 2, 2013",
-    lastActivity: "Aug 2, 2013",
-  },
-];
+// Static data removed - now using dynamic data from Supabase
 
 const Buyers = () => {
+  const { user, userProfile } = useContext(AuthContext);
   const [currentPage, setCurrentPage] = useState(1);
+  const [buyers, setBuyers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const itemsPerPage = 4;
 
-  const paginatedData = users.slice(
+  useEffect(() => {
+    if (user && userProfile?.vendor_id) {
+      fetchBuyers();
+    }
+  }, [user, userProfile]);
+
+  const fetchBuyers = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('customers')
+        .select('*')
+        .eq('vendor_id', userProfile.vendor_id)
+        .eq('customer_type', 'buyer')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Transform data to match expected format
+      const transformedBuyers = data.map(customer => ({
+        id: customer.id,
+        name: `${customer.first_name} ${customer.last_name || ''}`.trim(),
+        email: customer.email,
+        phoneNumber: customer.phone || 'No phone provided',
+        address: customer.address ?
+          `${customer.address.street || ''} ${customer.address.city || ''} ${customer.address.state || ''}`.trim() :
+          'No address provided',
+        createdAt: new Date(customer.created_at).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }),
+        lastActivity: customer.last_order_date ?
+          new Date(customer.last_order_date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          }) : 'No recent activity',
+      }));
+
+      setBuyers(transformedBuyers);
+    } catch (error) {
+      console.error("Error fetching buyers:", error);
+      setError("Failed to load buyers");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const paginatedData = buyers.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -80,6 +86,28 @@ const Buyers = () => {
       ),
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C53958]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        {error}
+        <button
+          onClick={fetchBuyers}
+          className="ml-4 text-sm bg-red-100 hover:bg-red-200 px-2 py-1 rounded"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -104,7 +132,7 @@ const Buyers = () => {
 
         <div className="mt-3">
           <ReusablePaginationComponent
-            totalItems={users.length}
+            totalItems={buyers.length}
             itemsPerPage={itemsPerPage}
             onPageChange={(page) => setCurrentPage(page)}
           />

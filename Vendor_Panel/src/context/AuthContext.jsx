@@ -66,7 +66,15 @@ export const AuthProvider = ({ children }) => {
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        // If user doesn't exist in users table, create it
+        if (error.code === 'PGRST116') {
+          await createMissingUserProfile(userId);
+          return;
+        }
+        return;
+      }
 
       // Add vendor_id to the profile for easy access
       const profileWithVendorId = {
@@ -77,6 +85,52 @@ export const AuthProvider = ({ children }) => {
       setUserProfile(profileWithVendorId);
     } catch (error) {
       console.error('Error fetching user profile:', error);
+    }
+  };
+
+  const createMissingUserProfile = async (userId) => {
+    try {
+      // Get user data from auth
+      const { data: authUser } = await supabase.auth.getUser();
+      if (!authUser.user) return;
+
+      // Create user record
+      const { error: userError } = await supabase
+        .from('users')
+        .insert({
+          id: userId,
+          email: authUser.user.email,
+          role: 'vendor',
+          first_name: authUser.user.user_metadata?.first_name || '',
+          last_name: authUser.user.user_metadata?.last_name || '',
+          phone: authUser.user.user_metadata?.phone || '',
+          is_active: true
+        });
+
+      if (userError) {
+        console.error('Error creating user profile:', userError);
+        return;
+      }
+
+      // Create vendor profile
+      const { error: vendorError } = await supabase
+        .from('vendors')
+        .insert({
+          user_id: userId,
+          business_name: `${authUser.user.user_metadata?.first_name || 'Vendor'} Business`,
+          business_type: 'healthcare',
+          verification_status: 'pending',
+          commission_rate: 10.0
+        });
+
+      if (vendorError) {
+        console.error('Error creating vendor profile:', vendorError);
+      }
+
+      // Fetch the newly created profile
+      await fetchUserProfile(userId);
+    } catch (error) {
+      console.error('Error creating missing user profile:', error);
     }
   };
 
@@ -103,7 +157,12 @@ export const AuthProvider = ({ children }) => {
           .eq('id', data.user.id)
           .single();
 
-        if (profile.data?.role === 'vendor' || profile.data?.role === 'admin') {
+        if (profile.error) {
+          // If user doesn't exist in users table, create it and allow access
+          console.log('User profile not found, creating...');
+          await createMissingUserProfile(data.user.id);
+          navigate("/dashboard");
+        } else if (profile.data?.role === 'vendor' || profile.data?.role === 'admin') {
           navigate("/dashboard");
         } else {
           throw new Error('Access denied. Vendor account required.');

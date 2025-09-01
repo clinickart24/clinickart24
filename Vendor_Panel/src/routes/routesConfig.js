@@ -15,6 +15,10 @@ export const routes = {
       component: lazy(() => import("../pages/HomePage/SignUp/SignUpPage.jsx")),
     },
     {
+      path: "/auth/callback",
+      component: lazy(() => import("../pages/AuthCallback.jsx")),
+    },
+    {
       path: "/dashboard",
       component: lazy(() => import("../pages/Dashboard/Dashboard.jsx")),
     },

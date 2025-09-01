@@ -16,7 +16,15 @@ const SignUpPage = () => {
     confirmPassword: "",
     businessName: "",
     businessType: "",
-    phone: ""
+    phone: "",
+    categoryType: "",
+    city: "",
+    zipcode: "",
+    aadharNumber: "",
+    gstNumber: "",
+    bankName: "",
+    ifscCode: "",
+    accountNumber: ""
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -50,7 +58,18 @@ const SignUpPage = () => {
         first_name: formData.name.split(' ')[0] || formData.name,
         last_name: formData.name.split(' ').slice(1).join(' ') || '',
         phone: formData.phone,
-        role: 'vendor'
+        role: 'vendor',
+        // Additional vendor fields
+        categoryType: formData.categoryType,
+        city: formData.city,
+        zipcode: formData.zipcode,
+        aadharNumber: formData.aadharNumber,
+        gstNumber: formData.gstNumber,
+        bankDetails: {
+          bankName: formData.bankName,
+          ifscCode: formData.ifscCode,
+          accountNumber: formData.accountNumber
+        }
       });
 
       setSuccess("Account created successfully! Please check your email to verify your account.");
@@ -244,7 +263,7 @@ const SignUpPage = () => {
                     required
                   />
                 </div>
-                <div className="mb-6">
+                <div className="mb-3">
                   <label className="block text-gray-700 text-sm font-medium mb-2">
                     Confirm Password
                   </label>
@@ -257,6 +276,141 @@ const SignUpPage = () => {
                     className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
                     required
                   />
+                </div>
+
+                {/* New Fields */}
+                <div className="mb-3">
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Type of Category
+                  </label>
+                  <select
+                    name="categoryType"
+                    value={formData.categoryType}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-gray-100 cursor-not-allowed"
+                    disabled
+                    required
+                  >
+                    <option value="">Select Category (Will be updated later)</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="pharmacy">Pharmacy</option>
+                    <option value="medical_equipment">Medical Equipment</option>
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">This field will be updated later by admin</p>
+                </div>
+
+                <div className="mb-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-2">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      placeholder="Enter your city"
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-2">
+                      Zipcode
+                    </label>
+                    <input
+                      type="text"
+                      name="zipcode"
+                      value={formData.zipcode}
+                      onChange={handleInputChange}
+                      placeholder="Enter zipcode"
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-3">
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Aadhar Number
+                  </label>
+                  <input
+                    type="text"
+                    name="aadharNumber"
+                    value={formData.aadharNumber}
+                    onChange={handleInputChange}
+                    placeholder="Enter 12-digit Aadhar number"
+                    pattern="[0-9]{12}"
+                    maxLength="12"
+                    className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    GST Number
+                  </label>
+                  <input
+                    type="text"
+                    name="gstNumber"
+                    value={formData.gstNumber}
+                    onChange={handleInputChange}
+                    placeholder="Enter GST number (optional)"
+                    className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+
+                {/* Bank Details Section */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-medium text-gray-800 mb-3 border-b pb-2">Bank Details</h3>
+
+                  <div className="mb-3">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">
+                      Bank Name
+                    </label>
+                    <input
+                      type="text"
+                      name="bankName"
+                      value={formData.bankName}
+                      onChange={handleInputChange}
+                      placeholder="Enter bank name"
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">
+                      IFSC Code
+                    </label>
+                    <input
+                      type="text"
+                      name="ifscCode"
+                      value={formData.ifscCode}
+                      onChange={(e) => setFormData({ ...formData, ifscCode: e.target.value.toUpperCase() })}
+                      placeholder="Enter IFSC code"
+                      pattern="[A-Z]{4}[0-9]{7}"
+                      maxLength="11"
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-6">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">
+                      Bank Account Number
+                    </label>
+                    <input
+                      type="text"
+                      name="accountNumber"
+                      value={formData.accountNumber}
+                      onChange={handleInputChange}
+                      placeholder="Enter bank account number"
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      required
+                    />
+                  </div>
                 </div>
                 <button
                   type="submit"

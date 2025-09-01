@@ -139,15 +139,22 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      // Create vendor profile
+      // Create vendor profile with new fields
+      const metadata = authUser.user.user_metadata || {};
       const { error: vendorError } = await supabase
         .from('vendors')
         .insert({
           user_id: userId,
-          business_name: `${authUser.user.user_metadata?.first_name || 'Vendor'} Business`,
+          business_name: `${metadata.first_name || 'Vendor'} Business`,
           business_type: 'healthcare',
           verification_status: 'pending',
-          commission_rate: 10.0
+          commission_rate: 10.0,
+          category_type: metadata.categoryType || '',
+          city: metadata.city || '',
+          zipcode: metadata.zipcode || '',
+          aadhar_number: metadata.aadharNumber || '',
+          gst_number: metadata.gstNumber || '',
+          bank_details: metadata.bankDetails || {}
         });
 
       if (vendorError) {

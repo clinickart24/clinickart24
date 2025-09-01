@@ -80,8 +80,10 @@ export const AuthProvider = ({ children }) => {
       setUserProfile(profileWithVendorId);
       setLoading(false);
 
-      // Navigate to dashboard if user is vendor or admin
-      if (profileWithVendorId.role === 'vendor' || profileWithVendorId.role === 'admin') {
+      // Only navigate to dashboard if we're on the home page or login page
+      const currentPath = window.location.pathname;
+      if ((profileWithVendorId.role === 'vendor' || profileWithVendorId.role === 'admin') &&
+          (currentPath === '/' || currentPath === '/login' || currentPath === '/sign-up')) {
         navigate('/dashboard');
       }
     } catch (error) {

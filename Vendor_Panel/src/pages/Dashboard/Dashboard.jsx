@@ -17,8 +17,13 @@ const Dashboard = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (user && userProfile?.vendor_id) {
-      fetchDashboardData();
+    if (user && userProfile) {
+      if (userProfile.vendor_id) {
+        fetchDashboardData();
+      } else {
+        // If user doesn't have vendor_id, show default stats and stop loading
+        setLoading(false);
+      }
     }
   }, [user, userProfile]);
 

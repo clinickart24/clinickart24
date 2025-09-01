@@ -15,7 +15,7 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://xmdjiqwsebwraqeyqmzn.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://xmdjiqwsebwraqeyqmzn.supabase.co wss://xmdjiqwsebwraqeyqmzn.supabase.co; frame-src 'none'; object-src 'none';"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://xmdjiqwsebwraqeyqmzn.supabase.co https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com; connect-src 'self' https://xmdjiqwsebwraqeyqmzn.supabase.co wss://xmdjiqwsebwraqeyqmzn.supabase.co; frame-src 'none'; object-src 'none';"
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"

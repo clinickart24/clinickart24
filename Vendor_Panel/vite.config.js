@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     ViteImageOptimizer({
       png: {
-        quality: [0.6, 0.8],
+        quality: 75,
       },
       jpeg: {
         quality: 75,

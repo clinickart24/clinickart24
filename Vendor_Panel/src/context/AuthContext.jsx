@@ -54,16 +54,17 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserProfile = async (userId) => {
     try {
-      const { data, error } = await supabase
+      // First get user data
+      const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('*, vendors(*)')
+        .select('*')
         .eq('id', userId)
         .single();
 
-      if (error) {
-        console.error('Error fetching user profile:', error);
+      if (userError) {
+        console.error('Error fetching user profile:', userError);
         // If user doesn't exist in users table, create it
-        if (error.code === 'PGRST116') {
+        if (userError.code === 'PGRST116') {
           await createMissingUserProfile(userId);
           return;
         }
@@ -71,12 +72,29 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      // Add vendor_id to the profile for easy access
-      const profileWithVendorId = {
-        ...data,
-        vendor_id: data.vendors?.[0]?.id || null
+      // Then get vendor data if user exists
+      const { data: vendorData, error: vendorError } = await supabase
+        .from('vendors')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      // Don't treat vendor not found as an error - user might not be a vendor
+      let profileWithVendorId = {
+        ...userData,
+        vendor_id: null,
+        vendor_info: null
       };
 
+      if (!vendorError && vendorData) {
+        profileWithVendorId = {
+          ...userData,
+          vendor_id: vendorData.id,
+          vendor_info: vendorData
+        };
+      }
+
+      console.log('User profile loaded:', profileWithVendorId);
       setUserProfile(profileWithVendorId);
       setLoading(false);
 

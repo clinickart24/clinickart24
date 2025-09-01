@@ -26,7 +26,7 @@ const Products = () => {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    if (user && userProfile?.vendor_id) {
+    if (user && userProfile) {
       fetchProducts();
       fetchCategories();
     }
@@ -39,6 +39,16 @@ const Products = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
+
+      // Check if we have vendor_id, if not, show empty state
+      if (!userProfile?.vendor_id) {
+        console.log('No vendor_id found, showing empty state');
+        setProducts([]);
+        setFilteredProducts([]);
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('products')
         .select(`

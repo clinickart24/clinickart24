@@ -200,10 +200,10 @@ const SignUpPage = () => {
   };
 
   return (
-    <section className="mb-4 h-screen">
+    <section className="min-h-screen bg-gray-50">
       <HeaderNav />
 
-      <div className="max-w-7xl mx-auto px-4 py-8 flex justify-center items-center h-[calc(100vh-60px)]">
+      <div className="max-w-7xl mx-auto px-4 py-8 min-h-[calc(100vh-80px)] flex justify-center items-start">
         {step === 1 && (
           <div className="border border-gray-100 rounded-lg max-w-lg p-6">
             <div className="flex flex-col justify-center w-full mx-auto">
@@ -722,48 +722,54 @@ const SignUpPage = () => {
           </div>
         )}
         {step === 7 && (
-          <div className="bg-white p-6 rounded-lg border border-gray-100 max-w-7xl mx-auto max-h-[80vh] overflow-y-auto">
-            <div className="p-6">
+          <div className="bg-white rounded-lg shadow-lg border border-gray-200 w-full max-w-4xl mx-auto my-8">
+            {/* Fixed Header */}
+            <div className="p-6 border-b border-gray-200 bg-white rounded-t-lg sticky top-0 z-10">
               <Store_Stepper />
+              <h2 className="text-xl font-bold text-[#C53958] mb-2 mt-4 uppercase">
+                Store Information
+              </h2>
+              <h1 className="text-2xl font-bold text-black mb-2">
+                Owner details, Open & Close hrs.
+              </h1>
+              <p className="text-gray-600 text-sm">
+                Provide accurate details to ensure smooth onboarding and verification
+              </p>
             </div>
 
-            <h2 className="text-lg font-bold text-[#C53958] mb-2 uppercase">
-              Store Information
-            </h2>
-            <h1 className="text-3xl font-bold text-black mb-4">
-              Owner details, Open & Close hrs.
-            </h1>
+            {/* Scrollable Content */}
+            <div className="max-h-[60vh] overflow-y-auto p-6">
 
-            <p className="text-gray-700 mb-6 max-w-2xl">
-              Rhoncus morbi et augue nec, in id ullamcorper at sit. Condimentum
-              sit nunc in eros scelerisque sed. Commodo in viverra nunc,
-              ullamcorper ut. Non, amet, aliquet scelerisque nullam sagittis,
-              pulvinar. Fermentum scelerisque sit consectetur hac mi. Mollis leo
-              eleifend ultricies purus iaculis.
-            </p>
+              <form className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-2">
+                      Owner Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter owner's full name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                      required
+                    />
+                  </div>
 
-            <form className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-800 mb-2">
-                  Basic Details
-                </label>
-                <input
-                  type="text"
-                  placeholder="Owner Full Name"
-                  className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-800 mb-2">
-                  Store Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="Store Full Name"
-                  className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-2">
+                      Store Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter store name"
+                      value={formData.businessName}
+                      onChange={(e) => setFormData({...formData, businessName: e.target.value})}
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                      required
+                    />
+                  </div>
+                </div>
               <div className="flex flex-col lg:flex-row gap-6">
                 <div className="w-full lg:w-1/2">
                   <label className="block text-lg font-semibold text-gray-500 mb-2">
@@ -788,68 +794,224 @@ const SignUpPage = () => {
                 </div>
               </div>
 
-              <div>
-                <h3 className="text-sm font-semibold text-gray-800 uppercase">
-                  Owner Contact Details
-                </h3>
-                <p className="text-gray-500 text-sm mb-3">
-                  To get updates on payments, customer complaints, order
-                  acceptance, etc.
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    Owner Contact Details
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    To get updates on payments, customer complaints, order acceptance, etc.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        placeholder="Enter email address"
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-2">
+                        Mobile Number *
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="Enter mobile number"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-2">
+                      Password *
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="Enter password (min 6 characters)"
+                      value={formData.password}
+                      onChange={(e) => setFormData({...formData, password: e.target.value})}
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-2">
+                      Confirm Password *
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="Confirm your password"
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-800 mb-2">
+                    Type of Category *
+                  </label>
+                  <select
+                    value={formData.categoryType}
+                    onChange={(e) => setFormData({...formData, categoryType: e.target.value})}
+                    className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                    required
+                  >
+                    <option value="">Select Category (Will be updated later)</option>
+                    <option value="pharmacy">Pharmacy</option>
+                    <option value="grocery">Grocery</option>
+                    <option value="restaurant">Restaurant</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">This field will be updated later by admin</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-2">
+                      City *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter your city"
+                      value={formData.city}
+                      onChange={(e) => setFormData({...formData, city: e.target.value})}
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-2">
+                      Zipcode *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter zipcode"
+                      value={formData.zipcode}
+                      onChange={(e) => setFormData({...formData, zipcode: e.target.value})}
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-800 mb-2">
+                    Aadhar Number *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter 12-digit Aadhar number"
+                    value={formData.aadharNumber}
+                    onChange={(e) => setFormData({...formData, aadharNumber: e.target.value})}
+                    className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                    required
+                    maxLength={12}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-800 mb-2">
+                    GST Number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter GST number (optional)"
+                    value={formData.gstNumber}
+                    onChange={(e) => setFormData({...formData, gstNumber: e.target.value})}
+                    className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Bank Details</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-2">
+                        Bank Name *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Enter bank name"
+                        value={formData.bankName}
+                        onChange={(e) => setFormData({...formData, bankName: e.target.value})}
+                        className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-2">
+                        IFSC Code *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Enter IFSC code"
+                        value={formData.ifscCode}
+                        onChange={(e) => setFormData({...formData, ifscCode: e.target.value})}
+                        className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-2">
+                        Account Number *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Enter account number"
+                        value={formData.accountNumber}
+                        onChange={(e) => setFormData({...formData, accountNumber: e.target.value})}
+                        className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C53958] transition-colors"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            {/* Fixed Footer with Submit Button */}
+            <div className="p-6 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+              {error && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                  {success}
+                </div>
+              )}
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-gray-600">
+                  All fields marked with * are required
                 </p>
-                <div className="space-y-4">
-                  <input
-                    type="email"
-                    placeholder="Enter email here"
-                    className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Enter mobile number"
-                    className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-semibold text-gray-800 uppercase">
-                  Opening & Closing Time
-                </h3>
-                <div className="space-y-3 mt-3">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="timing"
-                      className="text-pink-500"
-                    />
-                    <span className="text-gray-700">
-                      I open and close my restaurant at the same time on all
-                      working days
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="timing"
-                      className="text-pink-500"
-                    />
-                    <span className="text-gray-700">
-                      I've separate daywise timings
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <div>
                 <button
                   type="button"
-                  onClick={handleNextProfileStep}
-                  className="px-6 py-2 bg-[#C53958] text-white rounded-md hover:bg-[#b8334d] transition-colors"
+                  onClick={handleSignUp}
+                  disabled={loading}
+                  className="px-8 py-3 bg-[#C53958] text-white rounded-md hover:bg-[#b8334d] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Next
+                  {loading ? "Creating Account..." : "Create Account"}
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         )}
         {step === 8 && (

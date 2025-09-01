@@ -8,8 +8,9 @@ const ManageProfile = () => {
   const { logout, userProfile } = useContext(AuthContext);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [profile, setProfile] = useState({
-    avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    avatar: null,
     name: "",
     role: "",
     countryCode: "+1",
@@ -30,7 +31,7 @@ const ManageProfile = () => {
   useEffect(() => {
     if (userProfile) {
       setProfile({
-        avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+        avatar: userProfile.avatar_url || null,
         name: `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() || userProfile.email?.split('@')[0] || 'User',
         role: userProfile.role?.charAt(0)?.toUpperCase() + userProfile.role?.slice(1) || 'User',
         countryCode: "+1",
@@ -54,6 +55,61 @@ const ManageProfile = () => {
 
   const handleChange = (field, value) => {
     setProfile({ ...profile, [field]: value });
+  };
+
+  const handlePhotoUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setSaveMessage("Please select a valid image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setSaveMessage("Image size should be less than 5MB");
+      return;
+    }
+
+    setUploadingPhoto(true);
+    setSaveMessage("");
+
+    try {
+      // Upload to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userProfile.id}-${Date.now()}.${fileExt}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      // Update user profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ avatar_url: publicUrl })
+        .eq('id', userProfile.id);
+
+      if (updateError) throw updateError;
+
+      // Update local state
+      setProfile(prev => ({ ...prev, avatar: publicUrl }));
+      setSaveMessage("Profile photo updated successfully!");
+      setTimeout(() => setSaveMessage(""), 3000);
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      setSaveMessage("Failed to upload photo. Please try again.");
+    } finally {
+      setUploadingPhoto(false);
+    }
   };
 
   const handleSave = async () => {
@@ -101,22 +157,37 @@ const ManageProfile = () => {
       <div className="bg-white rounded-lg p-6 space-y-6 mt-3">
         <h2 className="text-lg font-semibold">Manage Profile</h2>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <div className="mr-3">
             <p>Avatar</p>
             <p className="text-xs text-gray-500">
-              Only *.png, *.jpg and *.jpeg image <br /> files are accepted
+              {uploadingPhoto ? "Uploading..." : "Only *.png, *.jpg and *.jpeg image files are accepted"}
             </p>
           </div>
           <div className="relative">
-            <img
-              src={profile.avatar}
-              alt="Avatar"
-              className="w-20 h-20 border border-gray-200 rounded-lg object-cover"
-            />
-            <button className="absolute top-1 right-1 bg-white p-1 rounded-lg shadow hover:bg-gray-100 flex items-center justify-center">
+            <div className="w-20 h-20 border border-gray-200 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+              {profile.avatar ? (
+                <img
+                  src={profile.avatar}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-r from-pink-400 to-purple-400 flex items-center justify-center text-white text-2xl font-bold">
+                  {profile.name?.charAt(0)?.toUpperCase() || userProfile?.email?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+              )}
+            </div>
+            <label className="absolute top-1 right-1 bg-white p-1 rounded-lg shadow hover:bg-gray-100 flex items-center justify-center cursor-pointer">
               <Icon icon="mdi:edit" className="text-lg" />
-            </button>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+                disabled={uploadingPhoto}
+              />
+            </label>
           </div>
         </div>
 

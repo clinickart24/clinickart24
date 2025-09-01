@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
 import images from "../../../lib/exportImages";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../context/AuthContext";
 
 const HeaderNavLogin = () => {
   const navigate = useNavigate();
+  const { userProfile } = useContext(AuthContext);
   return (
     <header className="max-w-7xl mx-auto w-full bg-white border-b border-gray-200 px-4 py-1 flex items-center justify-between">
       <div className="flex flex-col items-center gap-2 w-full lg:w-60 sm:flex-row sm:justify-start">
@@ -41,16 +43,26 @@ const HeaderNavLogin = () => {
           className="flex items-center gap-2 cursor-pointer"
           onClick={() => navigate("/settings/manage-profile")}
         >
-          <img
-            src={
-              "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
-            }
-            alt="User Avatar"
-            className="w-8 h-8 rounded-full object-cover"
-          />
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+            {userProfile?.avatar_url ? (
+              <img
+                src={userProfile.avatar_url}
+                alt="User Avatar"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-r from-pink-400 to-purple-400 flex items-center justify-center text-white text-sm font-bold">
+                {userProfile?.first_name?.charAt(0)?.toUpperCase() || userProfile?.email?.charAt(0)?.toUpperCase() || 'U'}
+              </div>
+            )}
+          </div>
           <div className="hidden sm:block text-right">
-            <p className="text-sm font-medium">Marvin McKinney</p>
-            <p className="text-xs text-gray-500">Super Admin</p>
+            <p className="text-sm font-medium">
+              {`${userProfile?.first_name || ''} ${userProfile?.last_name || ''}`.trim() || userProfile?.email?.split('@')[0] || 'User'}
+            </p>
+            <p className="text-xs text-gray-500">
+              {userProfile?.role?.charAt(0)?.toUpperCase() + userProfile?.role?.slice(1) || 'Vendor'}
+            </p>
           </div>
           <Icon icon="mdi:chevron-down" className="w-4 h-4 text-gray-500" />
         </div>

@@ -1,67 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import HOC from "../../../components/layout/LoginLayout/HOC";
 import {
   ReusablePaginationComponent,
   ReusableTableComponent,
 } from "../../../components/common/ReusableComponent/ReusableComponent";
 import { Icon } from "@iconify-icon/react";
+import { AuthContext } from "../../../context/AuthContext";
+import { transactionsAPI } from "../../../services/api";
+import { exportTableData } from "../../../utils/exportUtils";
 
-const returns = [
-  {
-    transactionNumber: "430906237494",
-    customerName: "Jane Cooper",
-    purchasedProduct: "T-Men's UA Storm Armour Down 2.0 Jacket",
-    date: "20 Oct 2022",
-    phoneNumber: "+62878981239",
-    paymentAmount: "$123",
-    status: "Warning",
-  },
-  {
-    transactionNumber: "387492287349",
-    customerName: "Wade Warren",
-    purchasedProduct: "Windproof Handbell Oversized Long Coat",
-    date: "20 Oct 2022",
-    phoneNumber: "+62878981239",
-    paymentAmount: "$236",
-    status: "Success",
-  },
-  {
-    transactionNumber: "093420239402",
-    customerName: "Williamson",
-    purchasedProduct: "Women's Stripe Sweater",
-    date: "20 Oct 2022",
-    phoneNumber: "+62878981239",
-    paymentAmount: "$726",
-    status: "Success",
-  },
-  {
-    transactionNumber: "934850829349",
-    customerName: "Jenny Wilson",
-    purchasedProduct: "Women's Turtleneck Sweater",
-    date: "20 Oct 2022",
-    phoneNumber: "+62878981239",
-    paymentAmount: "$124",
-    status: "Reject",
-  },
-  {
-    transactionNumber: "293840029340",
-    customerName: "Williamson",
-    purchasedProduct: "Women's Clothing Azure",
-    date: "20 Oct 2022",
-    phoneNumber: "+62878981239",
-    paymentAmount: "$149",
-    status: "Success",
-  },
-  {
-    transactionNumber: "394024029340",
-    customerName: "Robert Fox",
-    purchasedProduct: "One Set - Casual Hoodie with Buttons for Toddler",
-    date: "20 Oct 2022",
-    phoneNumber: "+62878981239",
-    paymentAmount: "$152",
-    status: "Success",
-  },
-];
+// Static data removed - now using dynamic data from Supabase
 
 const StatusCell = ({ value }) => {
   let colorClass = "";
@@ -88,22 +36,85 @@ const StatusCell = ({ value }) => {
 };
 
 const ReturnsList = () => {
+  const { user, userProfile } = useContext(AuthContext);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [returns, setReturns] = useState([]);
+  const [filteredReturns, setFilteredReturns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const itemsPerPage = 5;
 
-  const filteredReturns = returns.filter(
-    (returnItem) =>
-      returnItem.transactionNumber
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      returnItem.customerName
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      returnItem.purchasedProduct
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    if (user && userProfile) {
+      fetchReturns();
+    }
+  }, [user, userProfile]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm, returns]);
+
+  const fetchReturns = async () => {
+    try {
+      setLoading(true);
+      if (!userProfile?.vendor_id) {
+        setError("Vendor profile not found");
+        setLoading(false);
+        return;
+      }
+
+      const refunds = await transactionsAPI.getRefunds(userProfile.vendor_id);
+
+      // Transform data to match UI format
+      const transformedReturns = refunds.map(refund => ({
+        id: refund.id,
+        transactionNumber: refund.orderNumber,
+        customerName: `${refund.customer?.first_name || ''} ${refund.customer?.last_name || ''}`.trim() || 'Unknown Customer',
+        purchasedProduct: 'Product details', // This would need to be enhanced with order items
+        date: new Date(refund.date).toLocaleDateString('en-US', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        }),
+        phoneNumber: refund.customer?.phone || 'N/A',
+        paymentAmount: `$${refund.amount.toFixed(2)}`,
+        status: refund.reason === 'Customer request' ? 'Warning' : 'Success',
+        reason: refund.reason
+      }));
+
+      setReturns(transformedReturns);
+      setFilteredReturns(transformedReturns);
+    } catch (error) {
+      console.error("Error fetching returns:", error);
+      setError("Failed to load returns data");
+      setReturns([]);
+      setFilteredReturns([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = () => {
+    if (!searchTerm.trim()) {
+      setFilteredReturns(returns);
+      return;
+    }
+
+    const filtered = returns.filter(
+      (returnItem) =>
+        returnItem.transactionNumber
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        returnItem.customerName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        returnItem.purchasedProduct
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+    );
+    setFilteredReturns(filtered);
+  };
 
   const paginatedData = filteredReturns.slice(
     (currentPage - 1) * itemsPerPage,
@@ -138,10 +149,28 @@ const ReturnsList = () => {
     },
   ];
 
+  const handleExport = () => {
+    exportTableData(filteredReturns, 'returns-list', 'Returns List');
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C53958]"></div>
+        <span className="ml-2 text-gray-600">Loading returns...</span>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h5 className="text-lg font-semibold">Returns</h5>
       <div className="bg-white rounded-lg shadow p-4 mt-4">
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3">
           <h2 className="text-lg font-semibold">Returns List</h2>
           <div className="flex flex-wrap gap-2">
@@ -158,7 +187,10 @@ const ReturnsList = () => {
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
               />
             </div>
-            <button className="text-sm flex items-center gap-1 border border-[#D64860] text-[#D64860] px-3 py-1.5 rounded">
+            <button
+              onClick={handleExport}
+              className="text-sm flex items-center gap-1 border border-[#D64860] text-[#D64860] px-3 py-1.5 rounded hover:bg-[#D64860] hover:text-white transition-colors"
+            >
               <Icon icon="mdi:export" className="text-lg" />
               Export
             </button>
@@ -173,15 +205,25 @@ const ReturnsList = () => {
           </div>
         </div>
 
-        <ReusableTableComponent data={paginatedData} columns={columns} />
+        {filteredReturns.length === 0 ? (
+          <div className="text-center py-8">
+            <Icon icon="mdi:package-variant-closed" className="text-6xl text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 text-lg">No returns found</p>
+            <p className="text-gray-400 text-sm">Returns and refunds will appear here when available</p>
+          </div>
+        ) : (
+          <>
+            <ReusableTableComponent data={paginatedData} columns={columns} />
 
-        <div className="mt-3">
-          <ReusablePaginationComponent
-            totalItems={filteredReturns.length}
-            itemsPerPage={itemsPerPage}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
-        </div>
+            <div className="mt-3">
+              <ReusablePaginationComponent
+                totalItems={filteredReturns.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

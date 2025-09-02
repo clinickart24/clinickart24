@@ -1,86 +1,92 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import HOC from "../../../components/layout/LoginLayout/HOC";
 import {
   ReusablePaginationComponent,
   ReusableTableComponent,
 } from "../../../components/common/ReusableComponent/ReusableComponent";
 import { Icon } from "@iconify-icon/react";
+import { AuthContext } from "../../../context/AuthContext";
+import { transactionsAPI } from "../../../services/api";
 import { exportTableData } from "../../../utils/exportUtils";
 
-const transactions = [
-  {
-    transactionNumber: "20129380132",
-    customerName: "Jane Cooper",
-    purchasedProduct: "Women's Clothing Azure",
-    totalProduct: 2,
-    paymentAmount: "$300",
-    status: "Process",
-  },
-  {
-    transactionNumber: "20129380133",
-    customerName: "Wade Warren",
-    purchasedProduct: "Windproof Handbell Oversized Long Coat",
-    totalProduct: 3,
-    paymentAmount: "$384",
-    status: "Sent",
-  },
-  {
-    transactionNumber: "20129380134",
-    customerName: "Williamson",
-    purchasedProduct: "Women's Turtleneck Sweater",
-    totalProduct: 1,
-    paymentAmount: "$122",
-    status: "Packing",
-  },
-  {
-    transactionNumber: "20129380135",
-    customerName: "Jenny Wilson",
-    purchasedProduct: "T-Men's UA Storm Armour Down Jacket",
-    totalProduct: 2,
-    paymentAmount: "$837",
-    status: "Arrived",
-  },
-  {
-    transactionNumber: "20129380134",
-    customerName: "Williamson",
-    purchasedProduct: "Women's Stripe Sweater",
-    totalProduct: 4,
-    paymentAmount: "$327",
-    status: "Failed",
-  },
-  {
-    transactionNumber: "20129380136",
-    customerName: "Robert Fox",
-    purchasedProduct: "Women's Clothing Azure",
-    totalProduct: 1,
-    paymentAmount: "$823",
-    status: "Arrived",
-  },
-  {
-    transactionNumber: "20129380136",
-    customerName: "Robert Fox",
-    purchasedProduct: "One Set - Casual Hoodie with Buttons for Toddler",
-    totalProduct: 1,
-    paymentAmount: "$387",
-    status: "Arrived",
-  },
-];
+// Static data removed - now using dynamic data from Supabase
 
 const TransactionList = () => {
+  const { user, userProfile } = useContext(AuthContext);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [transactions, setTransactions] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const itemsPerPage = 5;
 
-  const filteredTransactions = transactions.filter(
-    (transaction) =>
-      transaction.transactionNumber.includes(searchTerm) ||
-      transaction.customerName
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      transaction.purchasedProduct
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    if (user && userProfile) {
+      fetchTransactions();
+    }
+  }, [user, userProfile]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm, transactions]);
+
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true);
+      if (!userProfile?.vendor_id) {
+        setError("Vendor profile not found");
+        setLoading(false);
+        return;
+      }
+
+      const transactionHistory = await transactionsAPI.getHistory(userProfile.vendor_id);
+
+      // Transform data to match UI format
+      const transformedTransactions = transactionHistory.map(transaction => ({
+        id: transaction.id,
+        transactionNumber: transaction.orderNumber,
+        customerName: `${transaction.customer?.first_name || ''} ${transaction.customer?.last_name || ''}`.trim() || 'Unknown Customer',
+        purchasedProduct: 'Order Items', // This would need to be enhanced with actual product details
+        totalProduct: 1, // This would need to be calculated from order items
+        paymentAmount: `$${transaction.amount.toFixed(2)}`,
+        status: transaction.status === 'completed' ? 'Arrived' :
+                transaction.status === 'processing' ? 'Process' :
+                transaction.status === 'shipped' ? 'Sent' :
+                transaction.status === 'pending' ? 'Packing' : 'Failed',
+        originalStatus: transaction.status
+      }));
+
+      setTransactions(transformedTransactions);
+      setFilteredTransactions(transformedTransactions);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      setError("Failed to load transaction data");
+      setTransactions([]);
+      setFilteredTransactions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = () => {
+    if (!searchTerm.trim()) {
+      setFilteredTransactions(transactions);
+      return;
+    }
+
+    const filtered = transactions.filter(
+      (transaction) =>
+        transaction.transactionNumber.includes(searchTerm) ||
+        transaction.customerName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        transaction.purchasedProduct
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+    );
+    setFilteredTransactions(filtered);
+  };
 
   const paginatedData = filteredTransactions.slice(
     (currentPage - 1) * itemsPerPage,
@@ -144,11 +150,29 @@ const TransactionList = () => {
     },
   ];
 
+  const handleExport = () => {
+    exportTableData(filteredTransactions, 'transactions-list', 'Transaction List');
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C53958]"></div>
+        <span className="ml-2 text-gray-600">Loading transactions...</span>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h5 className="text-lg font-semibold">Transaction</h5>
 
       <div className="bg-white rounded-lg shadow p-4 mt-4">
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Transaction List</h2>
           <div className="flex gap-2">
@@ -186,15 +210,25 @@ const TransactionList = () => {
           </div>
         </div>
 
-        <ReusableTableComponent data={paginatedData} columns={columns} />
+        {filteredTransactions.length === 0 ? (
+          <div className="text-center py-8">
+            <Icon icon="mdi:receipt" className="text-6xl text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 text-lg">No transactions found</p>
+            <p className="text-gray-400 text-sm">Transaction history will appear here when orders are placed</p>
+          </div>
+        ) : (
+          <>
+            <ReusableTableComponent data={paginatedData} columns={columns} />
 
-        <div className="mt-3">
-          <ReusablePaginationComponent
-            totalItems={filteredTransactions.length}
-            itemsPerPage={itemsPerPage}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
-        </div>
+            <div className="mt-3">
+              <ReusablePaginationComponent
+                totalItems={filteredTransactions.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

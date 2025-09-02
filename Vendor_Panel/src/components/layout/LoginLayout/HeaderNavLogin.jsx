@@ -3,6 +3,7 @@ import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
 import images from "../../../lib/exportImages";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../context/AuthContext";
+import RealTimeNotifications from "../../common/RealTimeNotifications";
 
 const HeaderNavLogin = () => {
   const navigate = useNavigate();
@@ -32,12 +33,7 @@ const HeaderNavLogin = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        <button className="relative">
-          <Icon icon="mdi:bell-outline" className="text-lg text-gray-500" />
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1 rounded-full">
-            1
-          </span>
-        </button>
+        <RealTimeNotifications />
 
         <div
           className="flex items-center gap-2 cursor-pointer"

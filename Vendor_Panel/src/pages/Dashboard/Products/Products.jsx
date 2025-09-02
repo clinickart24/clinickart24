@@ -23,6 +23,8 @@ const Products = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [categories, setCategories] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [showFilters, setShowFilters] = useState(false);
   const navigate = useNavigate();
   const itemsPerPage = 10;
 
@@ -38,7 +40,7 @@ const Products = () => {
 
   useEffect(() => {
     handleFilter();
-  }, [searchTerm, statusFilter, categoryFilter, products]);
+  }, [searchTerm, statusFilter, categoryFilter, priceRange, products]);
 
   const fetchProducts = async () => {
     try {
@@ -129,6 +131,16 @@ const Products = () => {
     // Category filter
     if (categoryFilter !== 'all') {
       filtered = filtered.filter(product => product.category_id === categoryFilter);
+    }
+
+    // Price range filter
+    if (priceRange.min !== '' || priceRange.max !== '') {
+      filtered = filtered.filter(product => {
+        const price = parseFloat(product.price);
+        const min = priceRange.min !== '' ? parseFloat(priceRange.min) : 0;
+        const max = priceRange.max !== '' ? parseFloat(priceRange.max) : Infinity;
+        return price >= min && price <= max;
+      });
     }
 
     setFilteredProducts(filtered);
@@ -435,8 +447,64 @@ const Products = () => {
                 <Icon icon={sortConfig.direction === 'asc' ? 'mdi:arrow-up' : 'mdi:arrow-down'} />
               )}
             </button>
+
+            {/* Advanced Filters Toggle */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`text-sm flex items-center gap-1 px-3 py-2 rounded-md transition-colors ${
+                showFilters ? 'bg-[#C53958] text-white' : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              <Icon icon="mdi:filter" />
+              Filters
+            </button>
           </div>
         </div>
+
+        {/* Advanced Filters Panel */}
+        {showFilters && (
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+            <h4 className="text-sm font-medium text-gray-700 mb-3">Advanced Filters</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Price Range */}
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Price Range</label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={priceRange.min}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#C53958] focus:border-transparent"
+                  />
+                  <span className="text-gray-400 self-center">-</span>
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={priceRange.max}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#C53958] focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              {/* Clear Filters */}
+              <div className="flex items-end">
+                <button
+                  onClick={() => {
+                    setSearchTerm('');
+                    setStatusFilter('all');
+                    setCategoryFilter('all');
+                    setPriceRange({ min: '', max: '' });
+                  }}
+                  className="text-sm text-[#C53958] hover:text-[#A12E47] font-medium"
+                >
+                  Clear All Filters
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Products Table */}
